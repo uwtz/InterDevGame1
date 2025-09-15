@@ -16,12 +16,17 @@ public class GameManager : MonoBehaviour
     public enum GameState { Launch, Fly };
     public GameState gameState = GameState.Launch;
 
+    AudioSource audioPlayer;
+    public AudioClip handrub;
+    public AudioClip woosh;
+
     private void Start()
     {
         player = GameObject.Find("Player").GetComponent<PlayerMove>();
         heliAnimator = GameObject.Find("Player").GetComponent<Animator>();
         handRightAnimator = GameObject.Find("HandRight").GetComponent<Animator>();
         handLeftAnimator = GameObject.Find("HandLeft").GetComponent<Animator>();
+        audioPlayer = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -35,6 +40,7 @@ public class GameManager : MonoBehaviour
             {
                 if (Input.GetKeyDown(KeyCode.W) && handsState == HandsState.Down)
                 {
+                    audioPlayer.PlayOneShot(handrub);
                     handRightAnimator.SetTrigger("Up");
                     handLeftAnimator.SetTrigger("Down");
                     handsState = HandsState.Up;
@@ -43,6 +49,7 @@ public class GameManager : MonoBehaviour
                 }
                 else if (Input.GetKeyDown(KeyCode.S) && handsState == HandsState.Up)
                 {
+                    audioPlayer.PlayOneShot(handrub);
                     handRightAnimator.SetTrigger("Down");
                     handLeftAnimator.SetTrigger("Up");
                     handsState = HandsState.Down;
@@ -59,6 +66,7 @@ public class GameManager : MonoBehaviour
         heliAnimator.SetFloat("Spd", f);
         if (handSwipeCount >= maxHandSwipeCount)
         {
+            audioPlayer.PlayOneShot(woosh);
             player.rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
             player.rb.gravityScale = .01f;
             heliAnimator.SetFloat("Spd", 1f);
